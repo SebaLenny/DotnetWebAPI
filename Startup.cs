@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DotnetWebAPI.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,10 +25,21 @@ namespace DotnetWebAPI
 
         public IConfiguration Configuration { get; }
 
+        private static string CreateConnectionString()
+        {
+            var server = "localhost";
+            var port = "5432";
+            var db = Environment.GetEnvironmentVariable("POSTGRES_DB");
+            var dbUser = Environment.GetEnvironmentVariable("POSTGRES_USER");
+            var dbPassword = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+            var connectionString = $"Server={server};Port={port};Database={db};User Id={dbUser};Password={dbPassword};";
+            return connectionString;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<AppDbContext>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
