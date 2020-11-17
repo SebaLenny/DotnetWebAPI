@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotnetWebAPI.Models
@@ -12,10 +13,13 @@ namespace DotnetWebAPI.Models
             base.OnModelCreating(modelBuilder);
         }
 
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseNpgsql();
         }
     }
 }

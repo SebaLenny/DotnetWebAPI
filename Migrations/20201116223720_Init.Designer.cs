@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DotnetWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201116000230_Init")]
+    [Migration("20201116223720_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

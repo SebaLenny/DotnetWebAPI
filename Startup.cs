@@ -25,13 +25,14 @@ namespace DotnetWebAPI
 
         public IConfiguration Configuration { get; }
 
-        private static string CreateConnectionString()
+        private string CreateConnectionString()
         {
+            Configuration.GetSection("DbEnvVars:POSTGRES_DB");
             var server = "localhost";
             var port = "5432";
-            var db = Environment.GetEnvironmentVariable("POSTGRES_DB");
-            var dbUser = Environment.GetEnvironmentVariable("POSTGRES_USER");
-            var dbPassword = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+            var db = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? Configuration["DbEnvVars:POSTGRES_DB"];
+            var dbUser = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? Configuration["DbEnvVars:POSTGRES_USER"];
+            var dbPassword = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? Configuration["DbEnvVars:POSTGRES_PASSWORD"];
             var connectionString = $"Server={server};Port={port};Database={db};User Id={dbUser};Password={dbPassword};";
             return connectionString;
         }
@@ -39,7 +40,10 @@ namespace DotnetWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>();
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseNpgsql(CreateConnectionString());
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -57,7 +61,7 @@ namespace DotnetWebAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DotnetWebAPI v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
