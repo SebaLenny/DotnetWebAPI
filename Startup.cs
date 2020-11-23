@@ -28,7 +28,7 @@ namespace DotnetWebAPI
         private string CreateConnectionString()
         {
             Configuration.GetSection("DbEnvVars:POSTGRES_DB");
-            var server = "localhost";
+            var server = Configuration["DbEnvVars:PostgresServer"] ?? "localhost";
             var port = "5432";
             var db = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? Configuration["DbEnvVars:POSTGRES_DB"];
             var dbUser = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? Configuration["DbEnvVars:POSTGRES_USER"];
@@ -40,9 +40,10 @@ namespace DotnetWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = CreateConnectionString();
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseNpgsql(CreateConnectionString());
+                options.UseNpgsql(connectionString);
             });
             services.AddControllers();
             services.AddSwaggerGen(c =>

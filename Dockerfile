@@ -13,4 +13,14 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "DotnetWebAPI.dll"]
+
+# Add wait-for-it
+COPY wait-for-it.sh wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+
+# ENTRYPOINT [ "/bin/bash", "-c" ]
+# CMD ["./wait-for-it.sh" , "db:80" , "--strict" , "--timeout=300" , "--" , "dotnet DotnetWebAPI.dll"]
+
+ENTRYPOINT /bin/bash -c "/app/wait-for-it.sh db:80 --strict --timeout=300 -- dotnet /app/DotnetWebApi.dll"
+
+# ENTRYPOINT ["dotnet", "DotnetWebAPI.dll"]
