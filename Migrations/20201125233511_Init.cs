@@ -14,11 +14,24 @@ namespace DotnetWebAPI.Migrations
                 {
                     CarCategoryId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CategoryName = table.Column<string>(type: "text", nullable: true)
+                    CategoryName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CarCategories", x => x.CarCategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cars",
+                columns: table => new
+                {
+                    CarId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CarName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cars", x => x.CarId);
                 });
 
             migrationBuilder.CreateTable(
@@ -27,7 +40,7 @@ namespace DotnetWebAPI.Migrations
                 {
                     ConditionsId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Description = table.Column<string>(type: "text", nullable: true)
+                    Description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,7 +68,7 @@ namespace DotnetWebAPI.Migrations
                 {
                     OrderId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,7 +81,7 @@ namespace DotnetWebAPI.Migrations
                 {
                     TrackId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TrackName = table.Column<string>(type: "text", nullable: true)
+                    TrackName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,23 +89,27 @@ namespace DotnetWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cars",
+                name: "CarCarCategory",
                 columns: table => new
                 {
-                    CarId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CarName = table.Column<string>(type: "text", nullable: true),
-                    CarCategoryId = table.Column<int>(type: "integer", nullable: true)
+                    CarCategoryId = table.Column<int>(type: "integer", nullable: false),
+                    CarsCarId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cars", x => x.CarId);
+                    table.PrimaryKey("PK_CarCarCategory", x => new { x.CarCategoryId, x.CarsCarId });
                     table.ForeignKey(
-                        name: "FK_Cars_CarCategories_CarCategoryId",
+                        name: "FK_CarCarCategory_CarCategories_CarCategoryId",
                         column: x => x.CarCategoryId,
                         principalTable: "CarCategories",
                         principalColumn: "CarCategoryId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CarCarCategory_Cars_CarsCarId",
+                        column: x => x.CarsCarId,
+                        principalTable: "Cars",
+                        principalColumn: "CarId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,7 +118,7 @@ namespace DotnetWebAPI.Migrations
                 {
                     RallyId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RallyName = table.Column<string>(type: "text", nullable: true),
+                    RallyName = table.Column<string>(type: "text", nullable: false),
                     EventDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CarCategoryId = table.Column<int>(type: "integer", nullable: true),
                     OrderId = table.Column<int>(type: "integer", nullable: false)
@@ -219,9 +236,9 @@ namespace DotnetWebAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cars_CarCategoryId",
-                table: "Cars",
-                column: "CarCategoryId");
+                name: "IX_CarCarCategory_CarsCarId",
+                table: "CarCarCategory",
+                column: "CarsCarId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rallies_CarCategoryId",
@@ -276,6 +293,9 @@ namespace DotnetWebAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CarCarCategory");
+
             migrationBuilder.DropTable(
                 name: "Results");
 

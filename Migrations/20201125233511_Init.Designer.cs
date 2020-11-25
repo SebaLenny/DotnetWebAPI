@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DotnetWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201125231423_Init")]
+    [Migration("20201125233511_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,6 +21,21 @@ namespace DotnetWebAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
+            modelBuilder.Entity("CarCarCategory", b =>
+                {
+                    b.Property<int>("CarCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CarsCarId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CarCategoryId", "CarsCarId");
+
+                    b.HasIndex("CarsCarId");
+
+                    b.ToTable("CarCarCategory");
+                });
+
             modelBuilder.Entity("DotnetWebAPI.Models.Car", b =>
                 {
                     b.Property<int>("CarId")
@@ -28,15 +43,11 @@ namespace DotnetWebAPI.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
-                    b.Property<int?>("CarCategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("CarName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("CarId");
-
-                    b.HasIndex("CarCategoryId");
 
                     b.ToTable("Cars");
                 });
@@ -49,6 +60,7 @@ namespace DotnetWebAPI.Migrations
                         .UseIdentityByDefaultColumn();
 
                     b.Property<string>("CategoryName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("CarCategoryId");
@@ -64,6 +76,7 @@ namespace DotnetWebAPI.Migrations
                         .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ConditionsId");
@@ -101,6 +114,7 @@ namespace DotnetWebAPI.Migrations
                         .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("OrderId");
@@ -125,6 +139,7 @@ namespace DotnetWebAPI.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("RallyName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("RallyId");
@@ -229,6 +244,7 @@ namespace DotnetWebAPI.Migrations
                         .UseIdentityByDefaultColumn();
 
                     b.Property<string>("TrackName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TrackId");
@@ -236,13 +252,19 @@ namespace DotnetWebAPI.Migrations
                     b.ToTable("Tracks");
                 });
 
-            modelBuilder.Entity("DotnetWebAPI.Models.Car", b =>
+            modelBuilder.Entity("CarCarCategory", b =>
                 {
-                    b.HasOne("DotnetWebAPI.Models.CarCategory", "CarCategory")
-                        .WithMany("Cars")
-                        .HasForeignKey("CarCategoryId");
+                    b.HasOne("DotnetWebAPI.Models.CarCategory", null)
+                        .WithMany()
+                        .HasForeignKey("CarCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("CarCategory");
+                    b.HasOne("DotnetWebAPI.Models.Car", null)
+                        .WithMany()
+                        .HasForeignKey("CarsCarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DotnetWebAPI.Models.Rally", b =>
@@ -340,8 +362,6 @@ namespace DotnetWebAPI.Migrations
 
             modelBuilder.Entity("DotnetWebAPI.Models.CarCategory", b =>
                 {
-                    b.Navigation("Cars");
-
                     b.Navigation("Rallies");
                 });
 
