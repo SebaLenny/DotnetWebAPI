@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using DotnetWebAPI.Models;
+using DotnetWebAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,7 +30,7 @@ namespace DotnetWebAPI
         private string CreateConnectionString()
         {
             Configuration.GetSection("DbEnvVars:POSTGRES_DB");
-            var server = Configuration["DbEnvVars:PostgresServer"] ?? "localhost";
+            var server = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost";
             var port = "5432";
             var db = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? Configuration["DbEnvVars:POSTGRES_DB"];
             var dbUser = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? Configuration["DbEnvVars:POSTGRES_USER"];
@@ -45,7 +47,10 @@ namespace DotnetWebAPI
             {
                 options.UseNpgsql(connectionString);
             });
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
+            services.AddScoped<IDriverService, DriverService>();
+            services.AddScoped<IUniversalService, UniversalService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DotnetWebAPI", Version = "v1" });
