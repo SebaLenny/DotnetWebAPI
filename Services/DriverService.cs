@@ -44,5 +44,14 @@ namespace DotnetWebAPI.Services
             var restult = await appDbContext.AddAsync(newDriver);
             return restult.Entity;
         }
+
+        public async Task<Driver> UpdateDriver(DriverCreateDto driverData)
+        {
+            var driver = await GetDriver(driverData.DriverNick);
+            if (driver == null) return null;
+            driver = mapper.Map(driverData, driver);
+            appDbContext.Update<Driver>(driver);
+            return driver;
+        }
     }
 }

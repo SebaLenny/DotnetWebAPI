@@ -10,7 +10,7 @@ namespace DotnetWebAPI.Services
         Task<List<Driver>> GetDrivers();
         Task<Driver> GetDriver(int driverId);
         Task<Driver> GetDriver(string nick);
-
         Task<Driver> CreateDriver(DriverCreateDto driverCreate);
+        Task<Driver> UpdateDriver(DriverCreateDto driverCreate);
     }
 }

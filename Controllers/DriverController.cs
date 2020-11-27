@@ -63,5 +63,19 @@ namespace DotnetWebAPI.Controllers
             }
             return BadRequest("Unable to create driver");
         }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateDriver(DriverCreateDto updateDto)
+        {
+            var driver = await driverService.UpdateDriver(updateDto);
+            if (driver != null)
+            {
+                if (await universalService.SaveAll())
+                {
+                    return Ok(driver);
+                }
+            }
+            return BadRequest("Could not update driver");
+        }
     }
 }

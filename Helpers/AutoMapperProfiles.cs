@@ -9,6 +9,7 @@ namespace DotnetWebAPI.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<DriverCreateDto, Driver>();
+            CreateMap<Driver, DriverCreateDto>();
         }
     }
 }
